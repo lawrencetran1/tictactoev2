@@ -1,9 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="myApp">
 <head>
 	<title>Tic Tac Toe</title>
 </head>
-<body>
+<body ng-controller="GameController as GameCtrl">
+<div class="container">
+	<div class="square" ng-repeat="game in GameCtrl.gameBoard">
+		<div class="square" ng-repeat="square in game[$index]">{{square}}</div>
+	</div>	
+</div>
 
+<script src="js/angular.js"></script>
+<script src="js/firebase.js"></script>
+<script src="js/angularfire.js"></script>
+<script src="js/main.js"></script>
+<script src="js/gameController.js"></script>
 </body>
 </html>
