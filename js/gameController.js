@@ -14,13 +14,13 @@
 			ctrl.gamelist = getGames();
 			ctrl.game = null;
 			ctrl.id = null;
-			ctrl.name = 'Player';
+			ctrl.name = 'n00b';
 			ctrl.createGame = createGame;
 			ctrl.board = getboard;
 			ctrl.chatList = getChat();						
 
 			// initialize new game with default settings
-			function createGame() {
+			function createGame(numgames) {
 				var gameref = new Firebase(GAME_LOCATION + gameId);
 				var listref = new Firebase(GAME_LOCATION + 'gamelist');
 				ctrl.newgame = $firebaseObject(gameref);
@@ -29,11 +29,12 @@
 				ctrl.newgame.gameId = gameId;
 				ctrl.newgame.board = [{move: ""},{move: ""},{move: ""},{move: ""},{move: ""},{move: ""},{move: ""},{move: ""},{move: ""}];
 				ctrl.newgame.round = 0;
-				ctrl.newgame.playerCount = 0;
+				ctrl.newgame.maxgames = numgames;
 				ctrl.newgame.winner = "";
 				ctrl.newgame.player1 = {name: "Player 1", symbol: 'X', wins: 0};
 				ctrl.newgame.player2 = {name: "Player 2", symbol: 'O', wins: 0};
 				ctrl.newgame.playerTurn = 0;
+				ctrl.numgames = null;
 				ctrl.newgame.$save(ctrl.newgame);							// use $save and pass in the changed object to save it to firebase
 			};
 
@@ -49,6 +50,7 @@
 				// ctrl.player2obj = $firebaseObject(player2ref);
 				ctrl.game = $firebaseObject(gameref);
 				ctrl.board = $firebaseArray(boardref);
+				ctrl.gameId = gameId;
 				if (num == 1) {
 					ctrl.id = 1;
 					player1ref.set({
@@ -105,16 +107,19 @@
 			ctrl.checkWinner = function() {
 				for (var i = 0; i < ctrl.game.combos.length; i++) {
 					if (ctrl.game.combos[i].combo === 'XXX') {
+						ctrl.game.maxgames--;
 						ctrl.game.winner = 1;
 						ctrl.game.player1.wins++;
 						$timeout(ctrl.clearGame, 1000);
 					}
 					else if (ctrl.game.combos[i].combo === 'OOO') {
+						ctrl.game.maxgames--;
 						ctrl.game.winner = 2;
 						ctrl.game.player2.wins++;
 						$timeout(ctrl.clearGame, 1000);
 					}
 					else if (ctrl.game.winner === "" && ctrl.game.round == 9) {
+						ctrl.game.maxgames--;
 						ctrl.game.winner = 3;
 						$timeout(ctrl.clearGame, 1000);
 					}
@@ -132,6 +137,23 @@
 					ctrl.game.combos[i].combo = "";
 				}
 				ctrl.game.$save(ctrl.game);
+				ctrl.gameover();
+			};
+
+			ctrl.gameover = function() {
+				var currentRef = new Firebase(GAME_LOCATION + ctrl.gameId);
+				var gamelistref = new Firebase(GAME_LOCATION + 'gamelist');
+				var currentObj = $firebaseObject(currentRef);
+				var gamelistArray = $firebaseArray(gamelistref);
+				if (ctrl.game.maxgames == 0) {
+					currentObj.$remove();
+					for (var i = 0; i < gamelistArray.length; i++) {
+						if (ctrl.gameId==gamelistArray[i].$value) {
+							console.log(gamelistArray[i]);
+							gamelistArray.$remove(i);
+						}
+					}
+				};
 			};
 
 			// retrieve all chats

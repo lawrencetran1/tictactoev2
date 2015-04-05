@@ -5,34 +5,28 @@
 	<link rel="stylesheet" type="text/css" href="css/normalize.css">
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link href='http://fonts.googleapis.com/css?family=Luckiest+Guy' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Orbitron:700' rel='stylesheet' type='text/css'>
+
 </head>
 <body ng-controller="GameController as GameCtrl">
 
-
 <div class="container-fluid">
 <div class="page-header">
-	<!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
 	<div class="row">
-	  <div class="col-xs-6 col-md-4"><h1>#WDI Project 1 <small>Tic Tac Toe</small></h1></div>
+	  <div class="col-xs-6 col-md-4"><h1>#tictactoe <small>All Day</small></h1></div>
 	  <div class="col-xs-6 col-md-4"><h1 class="text-center">X vs O</h1></div>
-	  <div class="col-xs-6 col-md-4"><h1 class="pull-right">Welcome {{GameCtrl.name}}<small></small></h1></div>
-	</div>
-		<!-- Columns are always 50% wide, on mobile and desktop -->
-<!-- 	<div class="row">
-	  <div class="col-xs-6"><h1>WDI Project 1 <small>Tic Tac Toe</small></h1></div>
-	  <div class="col-xs-6"><h1 class="pull-right">Welcome <small>{{GameCtrl.name}}</small></h1></div>
-	</div> -->
-  
+	  <div class="col-xs-6 col-md-4"><h1 class="pull-right">Welcome! {{GameCtrl.name}}<small></small></h1></div>
+	</div>  
 </div>
   <div class="row">
   <div class="col-xs-6 col-md-4">
-		<div class="panel panel-default">
+		<div class="panel panel-primary">
 			<div class="panel-heading">
 				<h3 class="panel-title">Current Game ID: {{GameCtrl.game.$id}}</h3>
 			</div>
 			<div class="panel-body">
 				<span>Round: {{GameCtrl.game.round}}</span>
-				<span>Player Turn: {{GameCtrl.game.playerTurn}}</span>
 			</div>
 			<div class="panel-body">
 				<span>{{GameCtrl.game.player1.name}}: {{GameCtrl.game.player1.wins}}</span>
@@ -42,14 +36,20 @@
 				<span>{{GameCtrl.game.player2.name}}: {{GameCtrl.game.player2.wins}}</span>
 				<span class="glyphicon glyphicon-hand-left" ng-show="GameCtrl.game.playerTurn==1"></span>
 			</div>
-
+			<div class="panel-body">
+				<form ng-submit="GameCtrl.saveName(GameCtrl.name)">
+					<div class="input-group">
+             <input type="text" class="form-control" placeholder="Enter your name" ng-model="GameCtrl.name">
+             <span class="input-group-btn"><button class="btn btn-default" type="button">Enter your name</button></span>
+          </div>
+				</form>
+			</div>
 		</div>
-		<div class="panel panel-default">
+		<div class="panel panel-info">
 			<div class="panel-heading">
 				<h3 class="panel-title">Chat Box</h3>
 			</div>
 			<div class="panel-body">
-				<!-- begin show all todos -->
 				<section class="chat-list">
 					<ul>
 						<li ng-repeat="chat in GameCtrl.chatList">
@@ -57,7 +57,6 @@
 						</li>
 					</ul>
 				</section>
-				<!-- end show all todos -->
 			</div>
 			<div class="panel-body">
 					<section class="chat">
@@ -74,13 +73,13 @@
   <div class="col-xs-6 col-md-4">
   	<div class="grid">
 			<div class="square" ng-repeat="square in GameCtrl.game.board" ng-click="GameCtrl.click($index)">{{square.move}}</div>
-			<div class="alert alert-success" role="alert" ng-show="GameCtrl.game.winner==1">Player 1 wins</div>
-			<div class="alert alert-info" role="alert" ng-show="GameCtrl.game.winner==2">Player 2 wins</div>
+			<div class="alert alert-success" role="alert" ng-show="GameCtrl.game.winner==1">{{GameCtrl.game.player1.name}} wins</div>
+			<div class="alert alert-info" role="alert" ng-show="GameCtrl.game.winner==2">{{GameCtrl.game.player2.name}} wins</div>
 			<div class="alert alert-danger" role="alert" ng-show="GameCtrl.game.winner==3">Tie Game</div>		
 		</div>
   </div>
   <div class="col-xs-6 col-md-4">
-		<div class="panel panel-default">
+		<div class="panel panel-primary">
 			<div class="panel-heading">
 				<h3 class="panel-title">Game Rooms</h3>
 			</div>
@@ -89,22 +88,28 @@
 				<button class="btn btn-success" ng-click="GameCtrl.board(id.$value, 1)">Join as P1</button>
 				<button class="btn btn-success" ng-click="GameCtrl.board(id.$value, 2)">Join as P2</button>
 			</div>
-			<div class="panel-body">
-				<button class="btn btn-primary btn-lg btn-block" ng-click="GameCtrl.createGame()">New Game</button>
+			
+		</div>
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				<h3 class="panel-title">Create New Game</h3>
 			</div>
 			<div class="panel-body">
-				<form ng-submit="GameCtrl.saveName(GameCtrl.name)">
-					<div class="input-group">
-             <input type="text" class="form-control" placeholder="Enter your name" ng-model="GameCtrl.name">
-             <span class="input-group-btn"><button class="btn btn-default" type="button">Enter</button></span>
-          </div>
+				<form class="form-inline" role="form" ng-submit="GameCtrl.createGame(GameCtrl.numgames)">
+				    <div class="input-group">
+				        <div class="form-group">          
+				        </div>
+				        <span class="input-group-btn">
+				        	<input type="number" class="form-control" style="width:345px" min="1" placeholder="Select number of games to play" ng-model="GameCtrl.numgames">
+				        	<input type="submit" class="form-control">
+				        </span>
+				    </div>
 				</form>
 			</div>			
 		</div>
   </div>
 </div>
 </div>
-
 
 <script src="js/angular.js"></script>
 <script src="js/firebase.js"></script>
