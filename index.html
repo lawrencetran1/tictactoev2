@@ -20,7 +20,7 @@
 				<h3 class="panel-title">Current Game ID: {{GameCtrl.game.$id}}</h3>
 			</div>
 			<div class="panel-body">
-				Round: {{GameCtrl.game.count}}
+				Round: {{GameCtrl.game.round}}
 			</div>
 			<div class="panel-body">
 				Player 1: {{GameCtrl.game.player1.wins}}
@@ -28,15 +28,48 @@
 			<div class="panel-body">
 				Player 2: {{GameCtrl.game.player2.wins}}</h4>
 			</div>
-			<div class="alert alert-success" role="alert">Player 1 wins</div>
-			<div class="alert alert-info" role="alert">Player 2 wins</div>
-			<div class="alert alert-danger" role="alert">Tie Game</div>
+			<div class="panel-body">
+				<form>
+					<div class="input-group">
+             <input type="text" class="form-control" placeholder="Enter your name">
+             <span class="input-group-btn"><button class="btn btn-default" type="button">Enter</button></span>
+          </div>
+				</form>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Chat Box</h3>
+			</div>
+			<div class="panel-body">
+				<!-- begin show all todos -->
+				<section class="chat-list">
+					<ul>
+						<li ng-repeat="chat in GameCtrl.chatList">
+							<span>{{ chat.$value }}</span>
+						</li>
+					</ul>
+				</section>
+				<!-- end show all todos -->
+			</div>
+			<div class="panel-body">
+					<section class="chat">
+						<form ng-submit="GameCtrl.addText(GameCtrl.text)">
+							<div class="input-group">
+	               <input type="text" class="form-control" placeholder="Chat here" ng-model="GameCtrl.text" ng-change="GameCtrl.$save(GameCtrl.text)">
+	               <span class="input-group-btn"><button class="btn btn-default" type="button" ng-click="GameCtrl.addText(GameCtrl.text)">Enter</button></span>
+	            </div>
+						</form>
+					</section>				
+			</div>
 		</div>
   </div>
   <div class="col-xs-6 col-md-4">
   	<div class="grid">
-  		<button class="btn btn-primary btn-lg btn-block" ng-click="GameCtrl.createGame()">New Game</button>
 			<div class="square" ng-repeat="square in GameCtrl.game.board" ng-click="GameCtrl.click($index)">{{square.move}}</div>
+			<div class="alert alert-success" role="alert" ng-show="GameCtrl.game.winner==1">Player 1 wins</div>
+			<div class="alert alert-info" role="alert" ng-show="GameCtrl.game.winner==2">Player 2 wins</div>
+			<div class="alert alert-danger" role="alert" ng-show="GameCtrl.game.winner==3">Tie Game</div>		
 		</div>
   </div>
   <div class="col-xs-6 col-md-4">
@@ -47,6 +80,9 @@
 			<div class="panel-body" ng-repeat="id in GameCtrl.gamelist">
 				<span>Game ID: {{id.$value}}</span>
 				<button class="btn btn-success pull-right" ng-click="GameCtrl.board(id.$value)">Join Game</button>
+			</div>
+			<div class="panel-body">
+				<button class="btn btn-primary btn-lg btn-block" ng-click="GameCtrl.createGame()">New Game</button>
 			</div>
 		</div>
   </div>

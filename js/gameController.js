@@ -3,9 +3,9 @@
 		.module('myApp')
 		.controller('GameController', GameController);
 
-		GameController.$inject = ['$firebaseObject', '$firebaseArray'];
+		GameController.$inject = ['$firebaseObject', '$firebaseArray', '$timeout'];
 
-		function GameController($firebaseObject, $firebaseArray) {
+		function GameController($firebaseObject, $firebaseArray, $timeout) {
 			var ctrl = this;
 			var GAME_LOCATION = 'https://larry-firebase.firebaseio.com/tictactoe/';
 			var ref = new Firebase(GAME_LOCATION);
@@ -13,9 +13,12 @@
 
 			ctrl.gamelist = getGames();
 			ctrl.game = null;
+			ctrl.id = null;
 			ctrl.createGame = createGame;
 			ctrl.board = getboard;
+			ctrl.chatList = getChat();							
 
+			// initialize new game with default settings
 			function createGame() {
 				var gameref = new Firebase(GAME_LOCATION + gameId);
 				var listref = new Firebase(GAME_LOCATION + 'gamelist');
@@ -33,13 +36,38 @@
 				ctrl.newgame.$save(ctrl.newgame);							// use $save and pass in the changed object to save it to firebase
 			};
 
+			// Join game by passing in gameId as a parameter on ng-click
+			// Set ctrl.board as $firebase array to loop through squares
+			// Set ctrl.game as $firebase object to update values
 			function getboard(gameId) {
 				var gameref = new Firebase(GAME_LOCATION + gameId);
 				var boardref = new Firebase(GAME_LOCATION + gameId + '/board');
 				ctrl.game = $firebaseObject(gameref);
 				ctrl.board = $firebaseArray(boardref);
+
+				// gameref.once("value", function(snapshot) {
+				// 	if (typeof(snapshot.val().player1)==="undefined") {
+				// 		var player1 = new Player('Player 1', 'X', 0);
+				// 		var player1Ref = gameref.child('player1');
+				// 		player1Ref.update(player1);
+				// 		ctrl.id = 'X';
+				// 	}
+				// 	else if (typeof(snapshot.val().player1)==="object" && typeof(snapshot.val().player2)==="undefined" && ctrl.id===null) {
+				// 		var player2 = new Player('Player 2', 'O', 0);
+				// 		var player2Ref = gameref.child('player2');
+				// 		player2Ref.update(player2);
+				// 		ctrl.id = 'O';
+				// 	}
+				// });
 			};
 
+			function Player(name, symbol, wins) {
+				this.name = name;
+				this.symbol = symbol;
+				this.wins = wins;
+			};
+
+			// return $firebase array of all game ID's to loop through using ng-repeat
 			function getGames() {
 				var listref = new Firebase(GAME_LOCATION + 'gamelist');
 				return $firebaseArray(listref);
@@ -75,18 +103,18 @@
 			ctrl.checkWinner = function() {
 				for (var i = 0; i < ctrl.game.combos.length; i++) {
 					if (ctrl.game.combos[i].combo === 'XXX') {
-						ctrl.game.winner = ctrl.game.player1.name;
+						ctrl.game.winner = 1;
 						ctrl.game.player1.wins++;
-						ctrl.clearGame();
+						$timeout(ctrl.clearGame, 1000);
 					}
 					else if (ctrl.game.combos[i].combo === 'OOO') {
-						ctrl.game.winner = ctrl.game.player2.name;
+						ctrl.game.winner = 2;
 						ctrl.game.player2.wins++;
-						ctrl.clearGame();
+						$timeout(ctrl.clearGame, 1000);
 					}
 					else if (ctrl.game.winner === "" && ctrl.game.round == 9) {
-						ctrl.game.winner = 'tie';
-						ctrl.clearGame();
+						ctrl.game.winner = 3;
+						$timeout(ctrl.clearGame, 1000);
 					}
 				}
 				ctrl.game.$save(ctrl.game);
@@ -104,6 +132,18 @@
 				ctrl.game.$save(ctrl.game);
 			};
 
+			// retrieve all chats
+			function getChat() {
+				var ref = new Firebase(GAME_LOCATION + 'chat');
+				var chat = $firebaseArray(ref);
+				return chat;
+			}
+
+			// add new text to chat box
+			ctrl.addText = function(text){
+				ctrl.chatList.$add(ctrl.text);
+				ctrl.text = null;
+			}
 
 		};
 
