@@ -2,12 +2,19 @@
 <html ng-app="myApp">
 <head>
 	<title>Tic Tac Toe</title>
+	<link rel="stylesheet" type="text/css" href="css/normalize.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body ng-controller="GameController as GameCtrl">
+
+<button ng-click="GameCtrl.createGame()">New Game</button>
+<p class="games"></p>
+<span class="score">Round: {{GameCtrl.game.count}}</span>
+<span class="score">Player 1: {{GameCtrl.game.player1.wins}}</span>
+<span class="score">Player 2: {{GameCtrl.game.player2.wins}}</span>
+
 <div class="container">
-	<div class="square" ng-repeat="game in GameCtrl.gameBoard">
-		<div class="square" ng-repeat="square in game[$index]">{{square}}</div>
-	</div>	
+	<div class="square" ng-repeat="game in GameCtrl.game.board" ng-click="GameCtrl.click($index)">{{game.move}}</div>
 </div>
 
 <script src="js/angular.js"></script>
@@ -15,5 +22,6 @@
 <script src="js/angularfire.js"></script>
 <script src="js/main.js"></script>
 <script src="js/gameController.js"></script>
+<script src="https://larry-firebase.firebaseio.com/tictactoe.json?callback=gotData"></script>
 </body>
 </html>
