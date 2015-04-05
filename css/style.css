@@ -1,32 +1,22 @@
-.container {
-	width: 600px;
+.grid {
+	width: 458px;
   position: relative;
   text-align: center;
   display: inline-block;
   float: left;
   margin: 0 auto;
-  background-size: 100% 100%; 
 }
 
 .square {
-	height: 100px;
-	width: 100px;
+	height: 150px;
+	width: 150px;
 	padding: 25px;
 	display: inline-block;
 	position: relative;
 	vertical-align: top;
-	font-size: 80px;
+	font-size: 40px;
 	text-align: center;
 	color: black;
 	border: 1px solid black;
-}
-
-.gameId {
-	width: 40px;
-	display: inline-block;
-	position: relative;
-	font-size: 20px;
-	text-align: center;
-	color: black;
-	border: 1px solid black;
+	margin: 1px auto;
 }

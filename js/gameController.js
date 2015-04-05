@@ -46,7 +46,6 @@
 			};
 
 			ctrl.click = function($index) {
-				console.log(ctrl.game)
 				var square = ctrl.game.board[$index];
 				if (square.move === 'X' || square.move === 'O') return;
 				if (ctrl.game.playerTurn == 0) {
