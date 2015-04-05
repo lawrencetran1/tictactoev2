@@ -11,7 +11,18 @@
 
 <div class="container-fluid">
 <div class="page-header">
-  <h1>WDI Project 1 <small>Tic Tac Toe</small></h1>
+	<!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
+	<div class="row">
+	  <div class="col-xs-6 col-md-4"><h1>#WDI Project 1 <small>Tic Tac Toe</small></h1></div>
+	  <div class="col-xs-6 col-md-4"><h1 class="text-center">X vs O</h1></div>
+	  <div class="col-xs-6 col-md-4"><h1 class="pull-right">Welcome {{GameCtrl.name}}<small></small></h1></div>
+	</div>
+		<!-- Columns are always 50% wide, on mobile and desktop -->
+<!-- 	<div class="row">
+	  <div class="col-xs-6"><h1>WDI Project 1 <small>Tic Tac Toe</small></h1></div>
+	  <div class="col-xs-6"><h1 class="pull-right">Welcome <small>{{GameCtrl.name}}</small></h1></div>
+	</div> -->
+  
 </div>
   <div class="row">
   <div class="col-xs-6 col-md-4">
@@ -20,22 +31,18 @@
 				<h3 class="panel-title">Current Game ID: {{GameCtrl.game.$id}}</h3>
 			</div>
 			<div class="panel-body">
-				Round: {{GameCtrl.game.round}}
+				<span>Round: {{GameCtrl.game.round}}</span>
+				<span>Player Turn: {{GameCtrl.game.playerTurn}}</span>
 			</div>
 			<div class="panel-body">
-				Player 1: {{GameCtrl.game.player1.wins}}
+				<span>{{GameCtrl.game.player1.name}}: {{GameCtrl.game.player1.wins}}</span>
+				<span class="glyphicon glyphicon-hand-left" ng-show="GameCtrl.game.playerTurn==0"></span>
 			</div>
 			<div class="panel-body">
-				Player 2: {{GameCtrl.game.player2.wins}}</h4>
+				<span>{{GameCtrl.game.player2.name}}: {{GameCtrl.game.player2.wins}}</span>
+				<span class="glyphicon glyphicon-hand-left" ng-show="GameCtrl.game.playerTurn==1"></span>
 			</div>
-			<div class="panel-body">
-				<form>
-					<div class="input-group">
-             <input type="text" class="form-control" placeholder="Enter your name">
-             <span class="input-group-btn"><button class="btn btn-default" type="button">Enter</button></span>
-          </div>
-				</form>
-			</div>
+
 		</div>
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -79,11 +86,20 @@
 			</div>
 			<div class="panel-body" ng-repeat="id in GameCtrl.gamelist">
 				<span>Game ID: {{id.$value}}</span>
-				<button class="btn btn-success pull-right" ng-click="GameCtrl.board(id.$value)">Join Game</button>
+				<button class="btn btn-success" ng-click="GameCtrl.board(id.$value, 1)">Join as P1</button>
+				<button class="btn btn-success" ng-click="GameCtrl.board(id.$value, 2)">Join as P2</button>
 			</div>
 			<div class="panel-body">
 				<button class="btn btn-primary btn-lg btn-block" ng-click="GameCtrl.createGame()">New Game</button>
 			</div>
+			<div class="panel-body">
+				<form ng-submit="GameCtrl.saveName(GameCtrl.name)">
+					<div class="input-group">
+             <input type="text" class="form-control" placeholder="Enter your name" ng-model="GameCtrl.name">
+             <span class="input-group-btn"><button class="btn btn-default" type="button">Enter</button></span>
+          </div>
+				</form>
+			</div>			
 		</div>
   </div>
 </div>

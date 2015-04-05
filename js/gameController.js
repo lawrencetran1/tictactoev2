@@ -14,9 +14,10 @@
 			ctrl.gamelist = getGames();
 			ctrl.game = null;
 			ctrl.id = null;
+			ctrl.name = 'Player';
 			ctrl.createGame = createGame;
 			ctrl.board = getboard;
-			ctrl.chatList = getChat();							
+			ctrl.chatList = getChat();						
 
 			// initialize new game with default settings
 			function createGame() {
@@ -39,26 +40,27 @@
 			// Join game by passing in gameId as a parameter on ng-click
 			// Set ctrl.board as $firebase array to loop through squares
 			// Set ctrl.game as $firebase object to update values
-			function getboard(gameId) {
+			function getboard(gameId, num) {
 				var gameref = new Firebase(GAME_LOCATION + gameId);
 				var boardref = new Firebase(GAME_LOCATION + gameId + '/board');
+				var player1ref = gameref.child('player1');
+				var player2ref = gameref.child('player2');
+				// ctrl.player1obj = $firebaseObject(player1ref);
+				// ctrl.player2obj = $firebaseObject(player2ref);
 				ctrl.game = $firebaseObject(gameref);
 				ctrl.board = $firebaseArray(boardref);
-
-				// gameref.once("value", function(snapshot) {
-				// 	if (typeof(snapshot.val().player1)==="undefined") {
-				// 		var player1 = new Player('Player 1', 'X', 0);
-				// 		var player1Ref = gameref.child('player1');
-				// 		player1Ref.update(player1);
-				// 		ctrl.id = 'X';
-				// 	}
-				// 	else if (typeof(snapshot.val().player1)==="object" && typeof(snapshot.val().player2)==="undefined" && ctrl.id===null) {
-				// 		var player2 = new Player('Player 2', 'O', 0);
-				// 		var player2Ref = gameref.child('player2');
-				// 		player2Ref.update(player2);
-				// 		ctrl.id = 'O';
-				// 	}
-				// });
+				if (num == 1) {
+					ctrl.id = 1;
+					player1ref.set({
+						name: ctrl.name, symbol: 'X', wins: 0
+					});
+				}
+				else if (num == 2) {
+					ctrl.id = 2;
+					player2ref.set({
+						name: ctrl.name, symbol: 'O', wins: 0
+					});
+				}
 			};
 
 			function Player(name, symbol, wins) {
@@ -76,12 +78,12 @@
 			ctrl.click = function($index) {
 				var square = ctrl.game.board[$index];
 				if (square.move === 'X' || square.move === 'O') return;
-				if (ctrl.game.playerTurn == 0) {
+				if (ctrl.game.playerTurn == 0 && ctrl.id == 1) {
 					square.move = 'X';
 					ctrl.game.playerTurn++;
 					ctrl.game.round++
 				}
-				else {
+				else if (ctrl.game.playerTurn == 1 && ctrl.id == 2) {
 					square.move = 'O';
 					ctrl.game.playerTurn--
 					ctrl.game.round++
@@ -141,7 +143,7 @@
 
 			// add new text to chat box
 			ctrl.addText = function(text){
-				ctrl.chatList.$add(ctrl.text);
+				ctrl.chatList.$add(ctrl.name + ': ' + ctrl.text);
 				ctrl.text = null;
 			}
 
