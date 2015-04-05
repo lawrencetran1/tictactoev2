@@ -8,13 +8,14 @@
 <body ng-controller="GameController as GameCtrl">
 
 <button ng-click="GameCtrl.createGame()">New Game</button>
-<p class="games"></p>
-<span class="score">Round: {{GameCtrl.game.count}}</span>
-<span class="score">Player 1: {{GameCtrl.game.player1.wins}}</span>
-<span class="score">Player 2: {{GameCtrl.game.player2.wins}}</span>
+<p class="id" ng-repeat="id in GameCtrl.gamelist">Game ID: {{id.$value}} <button ng-click="GameCtrl.board(id.$value)">Join Game</button></p>
+<p class="id">Current Game ID: {{GameCtrl.game.$id}}</p>
+<p class="score">Round: {{GameCtrl.game.count}}</p>
+<p class="score">Player 1: {{GameCtrl.game.player1.wins}}</p>
+<p class="score">Player 2: {{GameCtrl.game.player2.wins}}</p>
 
 <div class="container">
-	<div class="square" ng-repeat="game in GameCtrl.game.board" ng-click="GameCtrl.click($index)">{{game.move}}</div>
+	<div class="square" ng-repeat="square in GameCtrl.game.board" ng-click="GameCtrl.click($index)">{{square.move}}</div>
 </div>
 
 <script src="js/angular.js"></script>
@@ -22,6 +23,5 @@
 <script src="js/angularfire.js"></script>
 <script src="js/main.js"></script>
 <script src="js/gameController.js"></script>
-<script src="https://larry-firebase.firebaseio.com/tictactoe.json?callback=gotData"></script>
 </body>
 </html>

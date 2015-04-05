@@ -11,39 +11,42 @@
 			var ref = new Firebase(GAME_LOCATION);
 			var gameId = Math.round(Math.random()*100000000000);
 
-			ctrl.gameList = getGameList();
+			ctrl.gamelist = getGames();
+			ctrl.game = null;
 			ctrl.createGame = createGame;
-			// ctrl.checkGame = checkIfGameExists;
+			ctrl.board = getboard;
 
 			function createGame() {
-				var ref = new Firebase(GAME_LOCATION + gameId);
-				ctrl.game = $firebaseObject(ref);
-				ctrl.game.gameId = gameId;
-				ctrl.game.board = [{move: ""},{move: ""},{move: ""},{move: ""},{move: ""},{move: ""},{move: ""},{move: ""},{move: ""}];
-				ctrl.game.round = 0;
-				ctrl.game.playerCount = 0;
-				ctrl.game.winner = "";
-				ctrl.game.player1 = {name: "Player 1", symbol: 'X', wins: 0};
-				ctrl.game.player2 = {name: "Player 2", symbol: 'O', wins: 0};
-				ctrl.game.playerTurn = 0;
-				ctrl.game.$save(ctrl.game);							// use $save and pass in the changed object to save it to firebase
+				var gameref = new Firebase(GAME_LOCATION + gameId);
+				var listref = new Firebase(GAME_LOCATION + 'gamelist');
+				ctrl.newgame = $firebaseObject(gameref);
+				ctrl.list = $firebaseArray(listref);
+				ctrl.list.$add(gameId);
+				ctrl.newgame.gameId = gameId;
+				ctrl.newgame.board = [{move: ""},{move: ""},{move: ""},{move: ""},{move: ""},{move: ""},{move: ""},{move: ""},{move: ""}];
+				ctrl.newgame.round = 0;
+				ctrl.newgame.playerCount = 0;
+				ctrl.newgame.winner = "";
+				ctrl.newgame.player1 = {name: "Player 1", symbol: 'X', wins: 0};
+				ctrl.newgame.player2 = {name: "Player 2", symbol: 'O', wins: 0};
+				ctrl.newgame.playerTurn = 0;
+				ctrl.newgame.$save(ctrl.newgame);							// use $save and pass in the changed object to save it to firebase
 			};
 
-			function getGameList() {
-				var obj = $firebaseObject(ref);
+			function getboard(gameId) {
+				var gameref = new Firebase(GAME_LOCATION + gameId);
+				var boardref = new Firebase(GAME_LOCATION + gameId + '/board');
+				ctrl.game = $firebaseObject(gameref);
+				ctrl.board = $firebaseArray(boardref);
+			};
 
-     		// to take an action after the data loads, use the $loaded() promise
-     		obj.$loaded().then(function() {
-        // console.log("loaded record:", obj.$id, obj.someOtherKeyInData);
-
-       	// To iterate the key/value pairs of the object, use angular.forEach()
-       	angular.forEach(obj, function(value, key) {
-          	console.log(value.gameId);
-       	});
-     	});
+			function getGames() {
+				var listref = new Firebase(GAME_LOCATION + 'gamelist');
+				return $firebaseArray(listref);
 			};
 
 			ctrl.click = function($index) {
+				console.log(ctrl.game)
 				var square = ctrl.game.board[$index];
 				if (square.move === 'X' || square.move === 'O') return;
 				if (ctrl.game.playerTurn == 0) {
